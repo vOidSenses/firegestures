@@ -7,6 +7,7 @@ pref("extensions.firegestures.swipegesture", true);
 pref("extensions.firegestures.trigger_button", 2);
 pref("extensions.firegestures.suppress.alt", false);
 pref("extensions.firegestures.mousetrail", true);
+pref("extensions.firegestures.usediagonals", true);
 pref("extensions.firegestures.mousetrail.size", 2);
 pref("extensions.firegestures.mousetrail.color", "#33FF33");
 pref("extensions.firegestures.gesture_timeout", 3000);

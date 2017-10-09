@@ -59,6 +59,17 @@ xdGestureHandler.prototype = {
 	_lastX: null,
 	_lastY: null,
 
+	// minimum distance (in px) required for a gesture node to register
+	_deadzone: 7,
+
+	// number of consecutive nodes (multiples of _deadzone) required
+	// to add a direction to the chain
+	_minNodes: 2,
+
+	// require this chain (of length _minChain-1) be one direction only
+	// to absorb unintentional movements
+	_nodesChain: "",
+
 	// current direction chain e.g. LRLRUDUD
 	_directionChain: "",
 
@@ -137,6 +148,7 @@ xdGestureHandler.prototype = {
 		};
 		this._triggerButton  = getPref("trigger_button");
 		this._suppressAlt    = getPref("suppress.alt");
+		this._useDiagonals   = getPref("usediagonals");
 		this._trailEnabled   = getPref("mousetrail");
 		this._trailSize      = getPref("mousetrail.size");
 		this._trailColor     = getPref("mousetrail.color");
@@ -501,17 +513,51 @@ xdGestureHandler.prototype = {
 	_progressGesture: function FGH__progressGesture(event) {
 		var x = event.screenX;
 		var y = event.screenY;
-		var dx = Math.abs(x - this._lastX);
-		var dy = Math.abs(y - this._lastY);
+		
+		// Swap the dy measurement to get conventional angles later
+		var dx = x - this._lastX;
+		var dy = this._lastY - y;
+		
 		// ignore minimal mouse movement
-		if (dx < 10 && dy < 10)
+		if (Math.abs(dx) < this._deadzone && Math.abs(dy) < this._deadzone)
 			return;
-		// current direction
+		
 		var direction;
-		if (dx > dy)
-			direction = x < this._lastX ? "L" : "R";
-		else
-			direction = y < this._lastY ? "U" : "D";
+		if (this._useDiagonals) {
+			// Angle determination in degrees
+			var angle = Math.atan2(dy, dx) * (180/Math.PI);
+
+			// Correction for 180-360 degrees
+			if (angle < 0)
+				angle = 360 - Math.abs(angle);
+
+			// current direction
+			// var direction;
+			if (angle >= 22.5 && angle < 67.5) {
+				direction = "9";
+			} else if (angle >= 67.5 && angle < 112.5) {
+				direction = "U";
+			} else if (angle >= 112.5 && angle < 157.5) {
+				direction = "7";
+			} else if (angle >= 157.5 && angle < 202.5) {
+				direction = "L";
+			} else if (angle >= 202.5 && angle < 247.5) {
+				direction = "1";
+			} else if (angle >= 247.5 && angle < 292.5) {
+				direction = "D";
+			} else if (angle >= 292.5 && angle < 337.5) {
+				direction = "3";
+			} else {
+				direction = "R";
+			}
+		} else {
+			if (Math.abs(dx) > Math.abs(dy))
+				direction = x < this._lastX ? "L" : "R";
+			else
+				direction = y < this._lastY ? "U" : "D";
+		}
+		
+		
 		// trail drawing
 		if (this._trailEnabled)
 			this._drawTrail(this._lastX, this._lastY, x, y);
@@ -522,13 +568,34 @@ xdGestureHandler.prototype = {
 		if (this._state == STATE_KEYPRESS)
 			return;
 		// compare to the last direction
-		var lastDirection = this._directionChain.charAt(this._directionChain.length - 1);
-		if (direction != lastDirection) {
-			this._directionChain += direction;
-			this._gestureObserver.onDirectionChanged(event, this._directionChain);
-		}
+		// compare to the last direction
+		this._processDirection(event, direction);
+		
 		if (this._gestureTimeout > 0)
 			this._setTimeout(this._gestureTimeout);
+	},
+	
+	_processDirection: function FGH_processDirection(event, direction) {
+		// check direction against last element of _directionChain
+		var lastDirection = this._directionChain.charAt(this._directionChain.length - 1);
+		if (direction != lastDirection) {
+			var chainDir = this._nodesChain.charAt(0);
+			var chainRE = new RegExp('^[' + chainDir + ']*$');
+
+			// check if the temporary chain is consistent with the direction
+			if (chainRE.test(this._nodesChain) && chainDir == direction) {
+				// add the current direction to the directionChain
+				this._directionChain += direction;
+				this._gestureObserver.onDirectionChanged(event, this._directionChain);
+			} else {
+				// add the current direction to the temporary chain
+				if (this._nodesChain.length == this._minNodes) {
+					this._nodesChain = this._nodesChain.substr(1, this._nodesChain.length - 1) + direction;
+				} else {
+					this._nodesChain = this._nodesChain + direction;
+				}
+			}
+		}
 	},
 
 	// called from handleEvent (type is "mousedown", "mousemove", "DOMMouseScroll", "click")

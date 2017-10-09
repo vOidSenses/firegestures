@@ -9,6 +9,7 @@
 <!ENTITY triggerButton.middle "Middle">
 <!ENTITY triggerButton.right "Right">
 <!ENTITY suppress.alt "Do not start a gesture with holding Alt key">
+<!ENTITY usediagonals "Enable diagonal gestures">
 <!ENTITY trail "Trail Drawing">
 <!ENTITY trail.color "Color">
 <!ENTITY trail.size "Size">

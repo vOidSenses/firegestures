@@ -18,6 +18,7 @@
 			<preference id="pref:mousegesture"  name="extensions.firegestures.mousegesture"     type="bool" />
 			<preference id="pref:triggerbutton" name="extensions.firegestures.trigger_button"   type="int" />
 			<preference id="pref:suppressalt"   name="extensions.firegestures.suppress.alt"     type="bool" />
+			<preference id="pref:usediagonals"  name="extensions.firegestures.usediagonals"     type="bool" />
 			<preference id="pref:trail"         name="extensions.firegestures.mousetrail"       type="bool" />
 			<preference id="pref:trailsize"     name="extensions.firegestures.mousetrail.size"  type="int" />
 			<preference id="pref:trailcolor"    name="extensions.firegestures.mousetrail.color" type="string" />
@@ -42,6 +43,8 @@
 			</hbox>
 			<checkbox label="&suppress.alt;" class="indent"
 			          preference="pref:suppressalt" />
+			<checkbox label="&usediagonals;" class="indent"
+			          preference="pref:usediagonals" />
 			<checkbox id="trail" label="&trail;"
 			          preference="pref:trail"
 			          onsyncfrompreference="PrefsUI.updateMouseGestureUIGroup();" />

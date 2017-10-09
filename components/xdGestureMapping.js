@@ -277,7 +277,7 @@ xdGestureMapping.prototype = {
 				catch(ex) { Cu.reportError(ex); }
 				finally { stmt.reset(); stmt.finalize(); }
 				// if command is not assigned normal mouse gesture, add it as non-gesture-assigned item
-				if (!directions.some(function(direction) { return /^[LRUD]*$/.test(direction); }))
+				if (!directions.some(function(direction) { return /^[LRUD1379]*$/.test(direction); }))
 					directions.unshift("");
 				for (let direction of directions)
 					items.push([type, name, command, direction, flags]);

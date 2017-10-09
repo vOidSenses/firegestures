@@ -87,7 +87,7 @@ var PrefsUI = {
 			if (flags && /^max:firefox([\d\.]+)$/.test(flags) && parseFloat(RegExp.$1) < APP_VERSION)
 				return false;
 			// exclude items which are assigned extra gestures
-			return /^[LRUD]*$/.test(item[kDirectionCol]);
+			return /^[LRUD1379]*$/.test(item[kDirectionCol]);
 		});
 		// init nsITreeView
 		var mappingTree = getElement("mappingTree");

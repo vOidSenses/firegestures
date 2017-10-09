@@ -60,7 +60,7 @@ var EditUI = {
 	accept: function() {
 		// test the direction
 		// allow only empty string and a string which consists of inconsecutive LRUD chars
-		if (!/^[LRUD]*$/.test(gDirectionTextbox.value) || /(?:LL|RR|UU|DD)/.test(gDirectionTextbox.value)) {
+		if (!/^[LRUD1379]*$/.test(gDirectionTextbox.value) || /(?:LL|RR|UU|DD|11|33|77|99)/.test(gDirectionTextbox.value)) {
 			gDirectionTextbox.select();
 			return false;
 		}
